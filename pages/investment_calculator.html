@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Калькулятор Инвестиций - Pulse News</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <style>
+        /* Custom slider styling */
+        .custom-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 4px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #1E3A8A;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .custom-slider::-webkit-slider-thumb:hover {
+            background: #1D4ED8;
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .custom-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #1E3A8A;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .custom-slider::-moz-range-thumb:hover {
+            background: #1D4ED8;
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .scenario-button {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scenario-button.active {
+            background: #1E3A8A;
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .scenario-button.active h3 {
+            color: white;
+            font-weight: 700;
+        }
+        
+        .scenario-button.active p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .scenario-button.active .mt-3 {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .scenario-button:not(.active):hover {
+            background: #F1F5F9;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .number-display {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            font-feature-settings: 'tnum' 1, 'liga' 0;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: all 0.2s ease;
+            line-height: 1.1;
+        }
+        
+        .number-display:hover {
+            transform: translateY(-1px);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fpulsenews4916back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.5"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 shadow-lg">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-center">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                        <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                    <h1 class="text-2xl font-bold">Калькулятор Инвестиций Pulse News</h1>
+                </div>
+            </div>
+            <p class="text-center text-blue-100 mt-2">Рассчитайте потенциальную доходность вашей инвестиции</p>
+        </div>
+    </header>
+
+    <!-- Main Calculator Container -->
+    <main class="container mx-auto px-6 py-8 max-w-6xl">
+        <!-- Investment Input Section -->
+        <section class="glass-effect rounded-2xl p-8 mb-8 shadow-floating">
+            <h2 class="text-2xl font-bold text-text-primary mb-6 text-center">Параметры Инвестиции</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Investment Amount Slider -->
+                <div class="space-y-4">
+                    <label class="block text-lg font-semibold text-text-primary">
+                        Сумма Инвестиции
+                    </label>
+                    <div class="relative">
+                        <input type="range" id="investmentAmount" class="custom-slider w-full" min="1000" max="1000000" value="100000" step="1000" />
+                        <div class="flex justify-between text-sm text-text-secondary mt-2">
+                            <span>$1,000</span>
+                            <span>$1,000,000</span>
+                        </div>
+                    </div>
+                    <div class="bg-primary-50 rounded-lg p-4 text-center">
+                        <span class="text-sm text-text-secondary">Текущая сумма:</span>
+                        <div class="number-display text-2xl font-bold text-primary" id="investmentDisplay">
+                            $100,000
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Base Slider -->
+                <div class="space-y-4">
+                    <label class="block text-lg font-semibold text-text-primary">
+                        Количество Пользователей
+                    </label>
+                    <div class="relative">
+                        <input type="range" id="userCount" class="custom-slider w-full" min="5000" max="500000" value="100000" step="5000" />
+                        <div class="flex justify-between text-sm text-text-secondary mt-2">
+                            <span>5,000</span>
+                            <span>500,000</span>
+                        </div>
+                    </div>
+                    <div class="bg-accent-50 rounded-lg p-4 text-center">
+                        <span class="text-sm text-text-secondary">Текущее количество:</span>
+                        <div class="number-display text-2xl font-bold text-accent" id="userDisplay">
+                            100,000
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scenario Selection -->
+        <section class="glass-effect rounded-2xl p-8 mb-8 shadow-floating">
+            <h2 class="text-2xl font-bold text-text-primary mb-6 text-center">Выберите Сценарий</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <button class="scenario-button bg-white border-2 border-secondary-200 rounded-xl p-6 text-center" data-scenario="pessimistic">
+                    <div class="text-red-500 text-3xl mb-3">📉</div>
+                    <h3 class="text-lg font-bold text-text-primary mb-2">Пессимистичный</h3>
+                    <p class="text-sm text-text-secondary">Консервативный прогноз</p>
+                    <div class="mt-3 text-xs text-text-secondary">
+                        <div>Ставок в день: 2</div>
+                        <div>Средняя ставка: $5</div>
+                        <div>Активных дней: 20</div>
+                    </div>
+                </button>
+
+                <button class="scenario-button active bg-white border-2 border-secondary-200 rounded-xl p-6 text-center" data-scenario="realistic">
+                    <div class="text-blue-500 text-3xl mb-3">📊</div>
+                    <h3 class="text-lg font-bold text-text-primary mb-2">Реалистичный</h3>
+                    <p class="text-sm text-text-secondary">Умеренный прогноз</p>
+                    <div class="mt-3 text-xs text-text-secondary">
+                        <div>Ставок в день: 5</div>
+                        <div>Средняя ставка: $10</div>
+                        <div>Активных дней: 25</div>
+                    </div>
+                </button>
+
+                <button class="scenario-button bg-white border-2 border-secondary-200 rounded-xl p-6 text-center" data-scenario="optimistic">
+                    <div class="text-green-500 text-3xl mb-3">📈</div>
+                    <h3 class="text-lg font-bold text-text-primary mb-2">Оптимистичный</h3>
+                    <p class="text-sm text-text-secondary">Агрессивный прогноз</p>
+                    <div class="mt-3 text-xs text-text-secondary">
+                        <div>Ставок в день: 8</div>
+                        <div>Средняя ставка: $15</div>
+                        <div>Активных дней: 30</div>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <!-- Results Dashboard -->
+        <section class="glass-effect rounded-2xl p-8 shadow-floating">
+            <h2 class="text-2xl font-bold text-text-primary mb-6 text-center">Результаты Расчета</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Total Project Revenue -->
+                <div class="result-card rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-semibold text-text-secondary uppercase tracking-wide">
+                            Общий Доход Проекта
+                        </h3>
+                        <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <div class="number-display text-2xl font-bold text-primary" id="totalRevenue">
+                        $12,500,000
+                    </div>
+                    <p class="text-xs text-text-secondary mt-2">Месячный доход от всех пользователей</p>
+                </div>
+
+                <!-- 3% Royalty Amount -->
+                <div class="result-card rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-semibold text-text-secondary uppercase tracking-wide">
+                            Роялти (3%)
+                        </h3>
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                        </svg>
+                    </div>
+                    <div class="number-display text-2xl font-bold text-accent" id="royaltyAmount">
+                        $375,000
+                    </div>
+                    <p class="text-xs text-text-secondary mt-2">Доля инвесторов от общего дохода</p>
+                </div>
+
+                <!-- Individual Investor Income -->
+                <div class="result-card rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-semibold text-text-secondary uppercase tracking-wide">
+                            Ваш Доход
+                        </h3>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"/>
+                        </svg>
+                    </div>
+                    <div class="number-display text-2xl font-bold text-warning" id="investorIncome">
+                        $75,000
+                    </div>
+                    <p class="text-xs text-text-secondary mt-2">Ваша доля от роялти</p>
+                </div>
+
+                <!-- Return Percentage -->
+                <div class="result-card rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-semibold text-text-secondary uppercase tracking-wide">
+                            Доходность
+                        </h3>
+                        <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                        </svg>
+                    </div>
+                    <div class="number-display text-2xl font-bold text-success" id="returnPercentage">
+                        75.0%
+                    </div>
+                    <p class="text-xs text-text-secondary mt-2">Процент возврата инвестиции</p>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="mt-8 p-6 bg-secondary-50 rounded-xl">
+                <div class="flex items-start space-x-3">
+                    <svg class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <div>
+                        <h4 class="font-semibold text-text-primary mb-2">Методология Расчета</h4>
+                        <p class="text-sm text-text-secondary leading-relaxed">
+                            Расчет основан на общем фонде инвестиций $500,000. Ваша доля рассчитывается пропорционально вашей инвестиции. 
+                            Доходность зависит от активности пользователей и выбранного сценария развития проекта.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-secondary-700 text-white py-8 mt-12">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                </svg>
+                <span class="text-lg font-semibold">Pulse News Investment</span>
+            </div>
+            <p class="text-secondary-300 text-sm">
+                © 2025 Pulse News. Все права защищены. Инвестиционные расчеты носят прогнозный характер.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Scenario parameters
+        const scenarios = {
+            pessimistic: {
+                betsPerDay: 2,
+                averageBet: 5,
+                activeDays: 20,
+                profitability: 0.1
+            },
+            realistic: {
+                betsPerDay: 5,
+                averageBet: 10,
+                activeDays: 25,
+                profitability: 0.15
+            },
+            optimistic: {
+                betsPerDay: 8,
+                averageBet: 15,
+                activeDays: 30,
+                profitability: 0.2
+            }
+        };
+
+        let currentScenario = 'realistic';
+        const totalInvestmentPool = 500000; // $500,000 total investment pool
+
+        // DOM elements
+        const investmentSlider = document.getElementById('investmentAmount');
+        const userSlider = document.getElementById('userCount');
+        const investmentDisplay = document.getElementById('investmentDisplay');
+        const userDisplay = document.getElementById('userDisplay');
+        const scenarioButtons = document.querySelectorAll('.scenario-button');
+
+        // Result displays
+        const totalRevenueDisplay = document.getElementById('totalRevenue');
+        const royaltyAmountDisplay = document.getElementById('royaltyAmount');
+        const investorIncomeDisplay = document.getElementById('investorIncome');
+        const returnPercentageDisplay = document.getElementById('returnPercentage');
+
+        // Format number as currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Format number with commas
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US').format(num);
+        }
+
+        // Calculate results based on current inputs
+        function calculateResults() {
+            const investmentAmount = parseInt(investmentSlider.value);
+            const userCount = parseInt(userSlider.value);
+            const scenario = scenarios[currentScenario];
+
+            // Calculate total project revenue
+            const totalRevenue = userCount * scenario.betsPerDay * scenario.averageBet * scenario.activeDays;
+            
+            // Calculate 3% royalty
+            const royaltyAmount = totalRevenue * 0.03;
+            
+            // Calculate individual investor income based on investment proportion
+            const investmentProportion = investmentAmount / totalInvestmentPool;
+            const investorIncome = royaltyAmount * investmentProportion;
+            
+            // Calculate return percentage
+            const returnPercentage = (investorIncome / investmentAmount) * 100;
+
+            // Update displays
+            totalRevenueDisplay.textContent = formatCurrency(totalRevenue);
+            royaltyAmountDisplay.textContent = formatCurrency(royaltyAmount);
+            investorIncomeDisplay.textContent = formatCurrency(investorIncome);
+            returnPercentageDisplay.textContent = returnPercentage.toFixed(1) + '%';
+        }
+
+        // Update investment amount display
+        function updateInvestmentDisplay() {
+            const value = parseInt(investmentSlider.value);
+            investmentDisplay.textContent = formatCurrency(value);
+            calculateResults();
+        }
+
+        // Update user count display
+        function updateUserDisplay() {
+            const value = parseInt(userSlider.value);
+            userDisplay.textContent = formatNumber(value);
+            calculateResults();
+        }
+
+        // Handle scenario button clicks
+        function handleScenarioClick(button) {
+            // Remove active class from all buttons
+            scenarioButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Update current scenario
+            currentScenario = button.dataset.scenario;
+            
+            // Recalculate results
+            calculateResults();
+        }
+
+        // Event listeners
+        investmentSlider.addEventListener('input', updateInvestmentDisplay);
+        userSlider.addEventListener('input', updateUserDisplay);
+
+        scenarioButtons.forEach(button => {
+            button.addEventListener('click', () => handleScenarioClick(button));
+        });
+
+        // Initialize displays
+        updateInvestmentDisplay();
+        updateUserDisplay();
+        calculateResults();
+
+        // Add smooth animations on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.result-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
